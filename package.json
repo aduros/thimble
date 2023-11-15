@@ -1,0 +1,25 @@
+{
+  "name": "thimble",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "web-test-runner ./src/**/*.test.ts"
+  },
+  "dependencies": {
+    "preact": "^10.16.0"
+  },
+  "devDependencies": {
+    "@esm-bundle/chai": "^4.3.4",
+    "@preact/preset-vite": "^2.5.0",
+    "@types/mocha": "^10.0.4",
+    "@web/dev-server": "^0.4.1",
+    "@web/dev-server-esbuild": "^1.0.1",
+    "@web/test-runner": "^0.18.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
+  }
+}

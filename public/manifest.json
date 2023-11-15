@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/chrome-manifest.json",
+  "manifest_version": 3,
+  "name": "Thimble",
+  "version": "1.0",
+  "description": "TBD",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["thimble.js"],
+      "all_frames": true,
+      "match_origin_as_fallback": true,
+      "match_about_blank": true,
+      "run_at": "document_start",
+      "world": "MAIN"
+    }
+  ]
+}
