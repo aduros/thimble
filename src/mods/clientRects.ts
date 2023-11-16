@@ -1,4 +1,4 @@
-import { Scope, modifyGetter } from '.';
+import { Scope, modifyFunctionReturnValue, modifyGetter, modifyValue } from '.';
 import { Random } from '../utils/random';
 
 export function modifyClientRects (scope: Scope) {
@@ -14,6 +14,14 @@ export function modifyClientRects (scope: Scope) {
   modifyGetter(scope.DOMRect.prototype, 'y', randomizeValue);
   modifyGetter(scope.DOMRect.prototype, 'width', randomizeValue);
   modifyGetter(scope.DOMRect.prototype, 'height', randomizeValue);
+
+  // DOMRect.toJSON() leaks original values, patch it
+  modifyFunctionReturnValue(scope.DOMRectReadOnly.prototype, 'toJSON', ({originalReturnValue, self}) => {
+    for (const prop in originalReturnValue) {
+      originalReturnValue[prop] = self[prop as keyof DOMRectReadOnly];
+    }
+    return originalReturnValue;
+  });
 
   modifyGetter(scope.SVGRect.prototype, 'x', randomizeValue);
   modifyGetter(scope.SVGRect.prototype, 'y', randomizeValue);

@@ -16,9 +16,15 @@ describe('offsetWidth/Height', () => {
       const span = createTestSpan(scope);
       return [span.offsetWidth, span.offsetHeight];
     },
-    validate ([offsetWidth, offsetHeight]) {
-      expect(offsetWidth).to.be.greaterThan(0);
-      expect(offsetHeight).to.be.greaterThan(0);
+    validate ([width, height], [originalWidth, originalHeight]) {
+      expect(width).to.be.greaterThan(0);
+      expect(height).to.be.greaterThan(0);
+
+      expect(width).to.not.equal(originalWidth);
+      expect(height).to.not.equal(originalHeight);
+
+      // Aspect ratio should also change
+      expect(width / height).to.not.equal(originalWidth / originalHeight);
     }
   });
 });
@@ -26,13 +32,17 @@ describe('offsetWidth/Height', () => {
 describe('getBoundingClientRect', () => {
   testFingerprint({
     query: (scope) => {
-      const span = createTestSpan(scope);
-      const rect = span.getBoundingClientRect();
-      return [rect.x, rect.y, rect.width, rect.height];
+      return createTestSpan(scope).getBoundingClientRect();
     },
-    validate ([x, y, width, height]) {
-      expect(width).to.be.greaterThan(0);
-      expect(height).to.be.greaterThan(0);
+    validate (rect, originalRect) {
+      expect(rect.width).to.be.greaterThan(0);
+      expect(rect.height).to.be.greaterThan(0);
+
+      expect(rect.width).to.not.equal(originalRect.width);
+      expect(rect.height).to.not.equal(originalRect.height);
+
+      // Aspect ratio should also change
+      expect(rect.width / rect.height).to.not.equal(originalRect.width / originalRect.height);
     }
   });
 });
@@ -40,15 +50,22 @@ describe('getBoundingClientRect', () => {
 describe('getClientRects', () => {
   testFingerprint({
     query: (scope) => {
-      const span = createTestSpan(scope);
-      const rects = span.getClientRects();
-      return Array.from(rects, rect => ([rect.x, rect.y, rect.width, rect.height]));
+      return createTestSpan(scope).getClientRects();
     },
-    validate (rects) {
-      for (const rect of rects) {
-        const [x, y, width, height] = rect;
-        expect(width).to.be.greaterThan(0);
-        expect(height).to.be.greaterThan(0);
+    validate (rects, originalRects) {
+      expect(rects.length).to.equal(originalRects.length);
+
+      for (let ii = 0; ii < rects.length; ++ii) {
+        const [rect, originalRect] = [rects[ii], originalRects[ii]];
+
+        expect(rect.width).to.be.greaterThan(0);
+        expect(rect.height).to.be.greaterThan(0);
+
+        expect(rect.width).to.not.equal(originalRect.width);
+        expect(rect.height).to.not.equal(originalRect.height);
+
+        // Aspect ratio should also change
+        expect(rect.width / rect.height).to.not.equal(originalRect.width / originalRect.height);
       }
     }
   });

@@ -15,26 +15,6 @@ export function modifyCanvas (scope: Scope) {
   modifyGetter(scope.TextMetrics.prototype, 'fontBoundingBoxDescent', randomizeValue);
   modifyGetter(scope.TextMetrics.prototype, 'width', randomizeValue);
 
-  // addPatch(scope.ImageData.prototype, 'data', (data, random) => {
-  //   console.log("Accessed ImageData.data")
-  //   for (let n = 0; n < data.length; ++n) {
-  //     // imageData.data[n] += random.nextFloat() > 0.5 ? 1 : -1;
-  //     data[n] += random.nextIntBetween(-1, 1);
-  //   }
-  //   return data;
-  // });
-  //
-  // addPatch(scope.CanvasRenderingContext2D.prototype, 'getImageData', (getImageData, random) => {
-  //   return function (this: CanvasRenderingContext2D, ...rest) {
-  //     const imageData = getImageData.call(this, ...rest);
-  //     for (let n = 0; n < imageData.data.length; ++n) {
-  //       // imageData.data[n] += random.nextFloat() > 0.5 ? 1 : -1;
-  //       imageData.data[n] += random.nextIntBetween(-1, 1);
-  //     }
-  //     return imageData;
-  //   }
-  // });
-
   modifyFunctionReturnValue(scope.CanvasRenderingContext2D.prototype, 'getImageData', ({ originalReturnValue, random }) => {
     const data = originalReturnValue.data;
     for (let n = 0; n < data.length; ++n) {

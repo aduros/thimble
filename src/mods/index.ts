@@ -11,16 +11,22 @@ import { modifyMedia } from "./media";
 import { modifyFrame } from "./frame";
 import { createMimicFunction, modifyFunction } from "./function";
 
-let sessionId: number;
+declare global {
+  interface Window {
+    __thimbleRootState: RootState;
+    __thimblePatched: boolean;
+  }
+}
 
-// // TODO(2023-11-14): Hoist shared global state
-// interface SharedGlobalState {
-//   sessionId: number
-//   mimicFunctions: WeakMap<Function, Function>
-// }
+interface RootState {
+  seed: number
+  nextModificationId: number
+  // mimicFunctions: WeakMap<Function, Function>
+}
 
-// export function getState(): SharedGlobalState {
-// }
+export function getRootState(): RootState {
+  return window.top!.__thimbleRootState;
+}
 
 export interface ModifyValueContext<T> {
   originalValue: T,
@@ -29,19 +35,23 @@ export interface ModifyValueContext<T> {
 
 export function modifyValue<O, Prop extends keyof O> (obj: O, prop: Prop, getNewValue: (ctx: ModifyValueContext<O[Prop]>) => O[Prop]) {
   const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
-  if (descriptor) {
-    const ctx = {
-      originalValue: descriptor.value,
-      random: new Random(sessionId),
-    }
-    const newValue = getNewValue(ctx);
-    Object.defineProperty(obj, prop, {
-      enumerable: descriptor.enumerable,
-      configurable: descriptor.configurable,
-      writable: descriptor.writable,
-      value: typeof newValue === 'function' ? createMimicFunction(descriptor.value, newValue as any) : newValue,
-    });
+  if (!descriptor) {
+    throw new Error(`Missing descriptor: ${prop.toString()}`);
   }
+
+  const rootState = getRootState();
+  const modId = rootState.nextModificationId++;
+  const ctx = {
+    originalValue: descriptor.value,
+    random: new Random(rootState.seed).mutateByUInt32(modId),
+  }
+  const newValue = getNewValue(ctx);
+  Object.defineProperty(obj, prop, {
+    enumerable: descriptor.enumerable,
+    configurable: descriptor.configurable,
+    writable: descriptor.writable,
+    value: typeof newValue === 'function' ? createMimicFunction(descriptor.value, newValue as any) : newValue,
+  });
 }
 
 export interface ModifyGetterContext<Self, T> {
@@ -52,23 +62,26 @@ export interface ModifyGetterContext<Self, T> {
 
 export function modifyGetter<O, Prop extends keyof O> (obj: O, prop: Prop, newGetter: (ctx: ModifyGetterContext<O, O[Prop]>) => O[Prop]) {
   const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
-  if (descriptor) {
-    Object.defineProperty(obj, prop, {
-      enumerable: descriptor.enumerable,
-      configurable: descriptor.configurable,
-      set: descriptor.set,
-      get: createMimicFunction(descriptor.get!, function (this: O) {
-        // TODO(2023-11-13): Reset random
-        const originalValue = descriptor.get!.call(this);
-        const ctx = {
-          originalValue,
-          random: new Random(sessionId),
-          self: this,
-        };
-        return newGetter(ctx);
-      })
-    });
+  if (!descriptor) {
+    throw new Error(`Missing descriptor: ${prop.toString()}`);
   }
+
+  const rootState = getRootState();
+  const modId = rootState.nextModificationId++;
+  Object.defineProperty(obj, prop, {
+    enumerable: descriptor.enumerable,
+    configurable: descriptor.configurable,
+    set: descriptor.set,
+    get: createMimicFunction(descriptor.get!, function (this: O) {
+      const originalValue = descriptor.get!.call(this);
+      const ctx = {
+        originalValue,
+        random: new Random(rootState.seed).mutateByUInt32(modId),
+        self: this,
+      };
+      return newGetter(ctx);
+    })
+  });
 }
 
 export interface ModifyFunctionReturnValueContext<Self, Fn extends (...args: any) => any> {
@@ -88,7 +101,7 @@ export function modifyFunctionReturnValue<O, Prop extends keyof O, Fn extends (O
         originalFunction: originalFunction as any,
         originalArgs: originalArgs as any,
         originalReturnValue: (ctx.originalValue as (...args: any[]) => any).call(this, ...originalArgs),
-        random: new Random(sessionId),
+        random: new Random(ctx.random.state),
       });
     } as O[Prop];
   });
@@ -98,10 +111,10 @@ export type Scope = Window & typeof globalThis;
 
 export function modifyAll (scope: Scope) {
   // TODO(2023-11-14): Make this undetectable?
-  if ((scope as any).THIMBLE_PATCHED) {
+  if (scope.__thimblePatched) {
     return;
   }
-  (scope as any).THIMBLE_PATCHED = 1;
+  scope.__thimblePatched = true;
 
   console.log('Applying patches to scope');
 
@@ -119,7 +132,10 @@ export function modifyAll (scope: Scope) {
   modifyMedia(scope);
 }
 
-export function init (initialSeed: number, scope: Scope) {
-  sessionId = initialSeed;
+export function init (seed: number, scope: Scope) {
+  window.__thimbleRootState = {
+    seed,
+    nextModificationId: 0,
+  };
   modifyAll(scope);
 }
