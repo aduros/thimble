@@ -4,9 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
+    "start": "vite",
+    "build": "vite build",
     "test": "web-test-runner ./src/**/*.test.ts"
   },
   "dependencies": {
