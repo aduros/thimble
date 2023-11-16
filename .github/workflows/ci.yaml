@@ -1,0 +1,25 @@
+name: CI
+
+on: [push]
+
+jobs:
+  verify:
+    name: ${{ matrix.script.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        script:
+          - name: Unit tests
+            command: npm test
+          - name: Typecheck
+            command: npm run test:types
+          - name: Lint
+            command: npm run test:lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: npm
+      - run: npm ci
+      - run: ${{ matrix.script.command }}
