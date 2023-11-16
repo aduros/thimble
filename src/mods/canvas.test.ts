@@ -48,3 +48,20 @@ describe('toDataURL', () => {
     }
   });
 });
+
+describe('measureText', () => {
+  testFingerprint({
+    query: (scope) => scope.document.createElement('canvas').getContext('2d')!.measureText('Hello world'),
+    async validate (metrics, originalMetrics) {
+      expect(metrics).to.not.deep.equal(originalMetrics);
+
+      // The individual properties must also differ
+      for (const prop in metrics) {
+        const originalValue = originalMetrics[prop as keyof TextMetrics];
+        if (originalValue !== 0) {
+          expect(metrics).to.not.have.property(prop, originalValue);
+        }
+      }
+    }
+  });
+});

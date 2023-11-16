@@ -7,13 +7,13 @@ export function modifyCanvas (scope: Scope) {
     return originalValue * (1 + random.nextFloatBetween(-0.0005, 0.0005));
   }
 
-  modifyGetter(scope.TextMetrics.prototype, 'actualBoundingBoxAscent', randomizeValue);
-  modifyGetter(scope.TextMetrics.prototype, 'actualBoundingBoxDescent', randomizeValue);
-  modifyGetter(scope.TextMetrics.prototype, 'actualBoundingBoxLeft', randomizeValue);
-  modifyGetter(scope.TextMetrics.prototype, 'actualBoundingBoxRight', randomizeValue);
-  modifyGetter(scope.TextMetrics.prototype, 'fontBoundingBoxAscent', randomizeValue);
-  modifyGetter(scope.TextMetrics.prototype, 'fontBoundingBoxDescent', randomizeValue);
-  modifyGetter(scope.TextMetrics.prototype, 'width', randomizeValue);
+  // Since TextMetrics is still evolving, just modify all getters instead of specifying them individually
+  const textMetricsDescriptors = Object.getOwnPropertyDescriptors(scope.TextMetrics.prototype);
+  for (const [prop, descriptor] of Object.entries(textMetricsDescriptors)) {
+    if (descriptor.get) {
+      modifyGetter(scope.TextMetrics.prototype, prop as keyof TextMetrics, randomizeValue);
+    }
+  }
 
   modifyFunctionReturnValue(scope.CanvasRenderingContext2D.prototype, 'getImageData', ({ originalReturnValue, random }) => {
     const data = originalReturnValue.data;

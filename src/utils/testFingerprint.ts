@@ -15,6 +15,20 @@ function createIFrameScope (parentScope: Scope): Promise<Scope> {
   });
 }
 
+function deepClone<T> (obj: T): T {
+  if (Array.isArray(obj)) {
+    return obj.map(deepClone) as T;
+  }
+  if (obj != null && typeof obj === 'object') {
+    const copy = {} as typeof obj;
+    for (const prop in obj) {
+      copy[prop] = deepClone(obj[prop]);
+    }
+    return copy;
+  }
+  return obj;
+}
+
 export interface TestFingerprintOptions<T> {
   query: (scope: Scope) => T | Promise<T>
   expectDifferences?: boolean
@@ -28,7 +42,7 @@ export function testFingerprint<T> (opts: TestFingerprintOptions<T>) {
 
   async function query (scope: Scope): Promise<T> {
     const value = await opts.query(scope);
-    return JSON.parse(JSON.stringify(value)); // strip all getters/setters/functions
+    return deepClone(value);
   }
 
   beforeEach(async () => {
