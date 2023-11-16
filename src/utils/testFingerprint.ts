@@ -1,5 +1,5 @@
 import { expect } from "@esm-bundle/chai";
-import { Scope, modifyAll } from "../mods";
+import { Scope, init } from "../mods";
 
 function createIFrameScope (parentScope: Scope): Promise<Scope> {
   const iframeElement = parentScope.document.createElement('iframe');
@@ -29,7 +29,7 @@ export function testFingerprint<T> (opts: TestFingerprintOptions<T>) {
   beforeEach(async () => {
     scope = await createIFrameScope(window);
     originalValue = await opts.query(scope);
-    modifyAll(scope);
+    init(12345, scope);
     fakeValue = await opts.query(scope);
   })
 

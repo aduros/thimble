@@ -1,4 +1,4 @@
-import { modifyAll } from "./mods";
+import { init } from "./mods";
 
 console.log('Running anti-finger printing script');
-modifyAll(window);
+init(Date.now(), window);

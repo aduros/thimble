@@ -11,7 +11,7 @@ import { modifyMedia } from "./media";
 import { modifyFrame } from "./frame";
 import { createMimicFunction, modifyFunction } from "./function";
 
-const sessionId = Date.now();
+let sessionId: number;
 
 // // TODO(2023-11-14): Hoist shared global state
 // interface SharedGlobalState {
@@ -117,4 +117,9 @@ export function modifyAll (scope: Scope) {
   // modifyTimezone(scope);
   modifyClientRects(scope);
   modifyMedia(scope);
+}
+
+export function init (initialSeed: number, scope: Scope) {
+  sessionId = initialSeed;
+  modifyAll(scope);
 }
