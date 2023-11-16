@@ -11,7 +11,7 @@ jobs:
       matrix:
         script:
           - name: Unit tests
-            command: npx playwright install && npm test -- --playwright --browsers chromium firefox webkit
+            command: npx playwright install --with-deps && npm test -- --playwright --browsers chromium firefox webkit
           - name: Typecheck
             command: npm run test:types
           - name: Lint
