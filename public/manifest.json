@@ -4,6 +4,9 @@
   "name": "Thimble",
   "version": "1.0",
   "description": "TBD",
+  "icons": {
+    "128": "./icons/128x128.png"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],

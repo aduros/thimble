@@ -32,4 +32,12 @@ export class Random {
   nextFloatBetween(lowerInclusive: number, upperExclusive: number): number {
     return lowerInclusive + this.nextFloat() * (upperExclusive - lowerInclusive);
   }
+
+  nextWord(length: number): string {
+    let word = "";
+    for (let ii = 0; ii < length; ++ii) {
+      word += 'abcdefghijklmnopqrstuvwxyz'.charAt(this.nextIntBetween(0, 26));
+    }
+    return word;
+  }
 }

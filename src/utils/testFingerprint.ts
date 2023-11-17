@@ -31,7 +31,6 @@ function deepClone<T> (obj: T): T {
 
 export interface TestFingerprintOptions<T> {
   query: (scope: Scope) => T | Promise<T>
-  expectDifferences?: boolean
   validate: (value: T, originalValue: T, scope: Scope) => void | Promise<void>
 }
 

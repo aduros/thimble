@@ -16,6 +16,7 @@ describe('offsetWidth/Height', () => {
       const span = createTestSpan(scope);
       return [span.offsetWidth, span.offsetHeight];
     },
+
     validate ([width, height], [originalWidth, originalHeight]) {
       expect(width).to.be.greaterThan(0);
       expect(height).to.be.greaterThan(0);
@@ -34,6 +35,7 @@ describe('getBoundingClientRect', () => {
     query: (scope) => {
       return createTestSpan(scope).getBoundingClientRect();
     },
+
     validate (rect, originalRect) {
       expect(rect.width).to.be.greaterThan(0);
       expect(rect.height).to.be.greaterThan(0);
@@ -52,6 +54,7 @@ describe('getClientRects', () => {
     query: (scope) => {
       return createTestSpan(scope).getClientRects();
     },
+
     validate (rects, originalRects) {
       expect(rects.length).to.equal(originalRects.length);
 
