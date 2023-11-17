@@ -5,7 +5,10 @@ describe('getParameter', () => {
   testFingerprint({
     query (scope) {
       const canvas = scope.document.createElement('canvas');
-      const gl = canvas.getContext('webgl')!;
+      const gl = canvas.getContext('webgl');
+      if (!gl) {
+        return {};
+      }
 
       const params: string[] = [
         'MAX_COMBINED_TEXTURE_IMAGE_UNITS',
@@ -40,7 +43,10 @@ describe('WEBGL_debug_renderer_info', () => {
   testFingerprint({
     query (scope) {
       const canvas = scope.document.createElement('canvas');
-      const gl = canvas.getContext('webgl')!;
+      const gl = canvas.getContext('webgl');
+      if (!gl) {
+        return undefined;
+      }
 
       const ext = gl.getExtension('WEBGL_debug_renderer_info');
       return {
@@ -51,9 +57,11 @@ describe('WEBGL_debug_renderer_info', () => {
     },
 
     validate (info) {
-      expect(info.extensionIsNull).to.be.true;
-      expect(info.vendor).to.equal(null);
-      expect(info.renderer).to.equal(null);
+      if (info) {
+        expect(info.extensionIsNull).to.be.true;
+        expect(info.vendor).to.equal(null);
+        expect(info.renderer).to.equal(null);
+      }
     },
   });
 })

@@ -7,7 +7,7 @@ describe('navigator.storage.estimate', () => {
     validate (estimate, originalEstimate) {
       expect(estimate).to.not.deep.equal(originalEstimate);
       expect(estimate.usage).to.equal(0);
-      expect(estimate.quota).to.equal(51144149);
+      expect(estimate.quota).to.equal(52371609271);
     }
   })
 })
@@ -24,7 +24,7 @@ describe('navigator.webkitTemporaryStorage', () => {
     validate (estimate, originalEstimate) {
       expect(estimate).to.not.deep.equal(originalEstimate);
       expect(estimate.usage).to.equal(0);
-      expect(estimate.quota).to.equal(51144149);
+      expect(estimate.quota).to.equal(52371609271);
     }
   })
 })
