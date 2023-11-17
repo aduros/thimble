@@ -1,3 +1,5 @@
+import { hash } from "./hash";
+
 export class Random {
   constructor (public state: number) {
   }
@@ -5,6 +7,22 @@ export class Random {
   mutateByUInt32 (n: number): this {
     this.state = (this.state + n) >>> 0;
     return this;
+  }
+
+  mutateByFloat (n: number): this {
+    const buffer = new ArrayBuffer(4);
+    const float32View = new Float32Array(buffer);
+    const uint32View = new Uint32Array(buffer);
+    float32View[0] = n;
+    return this.mutateByUInt32(uint32View[0]);
+  }
+
+  mutateByBytes (bytes: Uint8Array | Uint8ClampedArray): this {
+    return this.mutateByUInt32(hash(bytes));
+  }
+
+  mutateByString (str: string): this {
+    return this.mutateByBytes(new TextEncoder().encode(str));
   }
 
   // mutateByUInt8Array... hash

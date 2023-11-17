@@ -3,8 +3,7 @@ import { Random } from '../utils/random';
 
 export function modifyCanvas (scope: Scope) {
   function randomizeValue ({originalValue, random}: {originalValue: number, random: Random}): number {
-    // TODO(2023-11-12): Mutate random by value?
-    return originalValue * (1 + random.nextFloatBetween(-0.0005, 0.0005));
+    return originalValue * (1 + random.mutateByFloat(originalValue).nextFloatBetween(-0.0005, 0.0005));
   }
 
   // Since TextMetrics is still evolving, just modify all getters instead of specifying them individually
@@ -17,6 +16,10 @@ export function modifyCanvas (scope: Scope) {
 
   modifyFunctionReturnValue(scope.CanvasRenderingContext2D.prototype, 'getImageData', ({ originalReturnValue, random }) => {
     const data = originalReturnValue.data;
+
+    // Mutate the RNG to prevent attackers from undoing the noise by using a known preset
+    random.mutateByBytes(data);
+
     for (let n = 0; n < data.length; ++n) {
       data[n] ^= random.nextInt() & 1;
     }

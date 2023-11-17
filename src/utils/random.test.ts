@@ -19,4 +19,17 @@ describe('Random', () => {
     expect(random.nextWord(4)).to.equal('moji');
     expect(random.nextWord(10)).to.equal('wrntotqdp');
   });
+
+  it('correctly mutates', () => {
+    expect(random.nextInt()).to.equal(3336926330);
+
+    random.mutateByUInt32(666);
+    expect(random.nextInt()).to.equal(1761583607);
+
+    random.mutateByString('hello');
+    expect(random.nextInt()).to.equal(1861161721);
+
+    random.mutateByFloat(123.456);
+    expect(random.nextInt()).to.equal(3273446311);
+  });
 });

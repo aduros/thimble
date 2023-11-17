@@ -2,10 +2,13 @@ import { Scope, modifyFunctionReturnValue } from ".";
 
 export function modifyMedia (scope: Scope) {
   modifyFunctionReturnValue(scope.HTMLMediaElement.prototype, 'canPlayType', ({originalArgs, originalReturnValue, random}) => {
-    console.log('canPlayType', originalArgs, originalReturnValue);
-    // TODO(2023-11-14): Don't use Math.random
-    if (originalReturnValue === 'probably' && Math.random() > 0.5) {
-      return 'maybe';
+    // Randomly swap "probably" and "maybe"
+    if (originalReturnValue && (random.mutateByString(originalArgs[0]).nextInt() & 1) === 1) {
+      switch (originalReturnValue) {
+        case 'probably': return 'maybe';
+        case 'maybe': return 'probably';
+        default: originalReturnValue satisfies never;
+      }
     }
     return originalReturnValue;
   });

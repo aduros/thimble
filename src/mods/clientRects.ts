@@ -1,10 +1,9 @@
-import { Scope, modifyFunctionReturnValue, modifyGetter, modifyValue } from '.';
+import { Scope, modifyFunctionReturnValue, modifyGetter } from '.';
 import { Random } from '../utils/random';
 
 export function modifyClientRects (scope: Scope) {
   function randomizeValue ({originalValue, random}: {originalValue: number, random: Random}): number {
-    // TODO(2023-11-12): Mutate random by value?
-    return originalValue * (1 + random.nextFloatBetween(-0.0005, 0.0005));
+    return originalValue * (1 + random.mutateByFloat(originalValue).nextFloatBetween(-0.0005, 0.0005));
   }
 
   modifyGetter(scope.HTMLElement.prototype, 'offsetWidth', randomizeValue);
