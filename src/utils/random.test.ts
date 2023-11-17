@@ -15,9 +15,9 @@ describe('Random', () => {
   });
 
   it('generates words', () => {
-    expect(random.nextWord(6)).to.equal('cdtall');
-    expect(random.nextWord(4)).to.equal('moji');
-    expect(random.nextWord(10)).to.equal('wrntotqdp');
+    expect(random.nextWord(6)).to.equal('kpyect');
+    expect(random.nextWord(4)).to.equal('vsyy');
+    expect(random.nextWord(10)).to.equal('ixsgqtalvp');
   });
 
   it('correctly mutates', () => {

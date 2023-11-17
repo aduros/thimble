@@ -10,6 +10,10 @@ import { modifyClientRects } from "./clientRects";
 import { modifyMedia } from "./media";
 import { modifyFrame } from "./frame";
 import { createMimicFunction, modifyFunction } from "./function";
+import { modifyWebGL } from "./webgl";
+import { modifyDoNotTrack } from "./doNotTrack";
+import { modifyBattery } from "./battery";
+import { modifyStorage } from "./storage";
 
 declare global {
   interface Window {
@@ -101,7 +105,7 @@ export function modifyFunctionReturnValue<O, Prop extends keyof O, Fn extends (O
         originalFunction: originalFunction as any,
         originalArgs: originalArgs as any,
         originalReturnValue: (ctx.originalValue as (...args: any[]) => any).call(this, ...originalArgs),
-        random: new Random(ctx.random.state),
+        random: ctx.random.clone(),
       });
     } as O[Prop];
   });
@@ -121,15 +125,19 @@ export function modifyAll (scope: Scope) {
   modifyFunction(scope);
   modifyFrame(scope);
 
-  modifyCanvas(scope);
-  modifyScreen(scope);
-  modifyDeviceMemory(scope);
-  modifyHardwareConcurrency(scope);
-  modifyAudio(scope);
-  modifyLanguage(scope);
   // modifyTimezone(scope);
+  modifyAudio(scope);
+  modifyBattery(scope);
+  modifyCanvas(scope);
   modifyClientRects(scope);
+  modifyDeviceMemory(scope);
+  modifyDoNotTrack(scope);
+  modifyHardwareConcurrency(scope);
+  modifyLanguage(scope);
   modifyMedia(scope);
+  modifyScreen(scope);
+  modifyStorage(scope);
+  modifyWebGL(scope);
 }
 
 export function init (seed: number, scope: Scope) {

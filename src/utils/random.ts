@@ -4,6 +4,10 @@ export class Random {
   constructor (public state: number) {
   }
 
+  clone(): Random {
+    return new Random(this.state);
+  }
+
   mutateByUInt32 (n: number): this {
     this.state = (this.state + n) >>> 0;
     return this;
@@ -54,8 +58,12 @@ export class Random {
   nextWord(length: number): string {
     let word = "";
     for (let ii = 0; ii < length; ++ii) {
-      word += 'abcdefghijklmnopqrstuvwxyz'.charAt(this.nextIntBetween(0, 26));
+      word += 'abcdefghijklmnopqrstuvwxyz'.charAt(this.nextInt() % 26);
     }
     return word;
+  }
+
+  nextChoice<T>(options: T[]): T {
+    return options[this.nextInt() % options.length];
   }
 }
