@@ -17,8 +17,8 @@ import { modifyStorage } from "./storage";
 
 declare global {
   interface Window {
-    __thimbleRootState: RootState;
-    __thimblePatched: boolean;
+    __thimbleRootState?: RootState;
+    __thimblePatched?: boolean;
   }
 }
 
@@ -28,8 +28,51 @@ interface RootState {
   // mimicFunctions: WeakMap<Function, Function>
 }
 
-export function getRootState(): RootState {
-  return window.top!.__thimbleRootState;
+export function getRootState(scope: Scope): RootState {
+  // let rootState = window.top?.__thimbleRootState ?? window.__thimbleRootState;
+  // if (!rootState) {
+  //   rootState = window.__thimbleRootState = {
+  //     seed: (Math.random() * 4294967295) >>> 0,
+  //     nextModificationId: 0,
+  //   };
+  // }
+  // return rootState;
+
+  let rootState = window.parent.__thimbleRootState ?? window.__thimbleRootState;
+  if (!rootState) {
+    rootState = window.__thimbleRootState = {
+      seed: (Math.random() * 4294967295) >>> 0,
+      nextModificationId: 0,
+    };
+  }
+  return rootState;
+
+  // let state = scope.parent.__thimbleRootState
+  // if (!state) {
+  //   state = scope.__thimbleRootState;
+  //   if (!state) {
+  //     console.log('Creating');
+  //     // Should never happen?
+  //     state = scope.__thimbleRootState = {
+  //       seed: Date.now(),
+  //       nextModificationId: 0,
+  //     }
+  //   }
+  // }
+  // return state;
+
+  // let state = scope.parent.__thimbleRootState
+  // if (!state) {
+  //   state = scope.__thimbleRootState;
+  //   if (!state) {
+  //     console.log('Creating');
+  //     state = scope.__thimbleRootState = {
+  //       seed: Date.now(),
+  //       nextModificationId: 0,
+  //     }
+  //   }
+  // }
+  // return state;
 }
 
 export interface ModifyValueContext<T> {
@@ -115,12 +158,18 @@ export type Scope = Window & typeof globalThis;
 
 export function modifyAll (scope: Scope) {
   // TODO(2023-11-14): Make this undetectable?
-  if (scope.__thimblePatched) {
+  try {
+    if (scope.__thimblePatched) {
+      return;
+    }
+    scope.__thimblePatched = true;
+  } catch (error) {
+    console.log('Error modifying frame, could be cross-origin?', error);
     return;
   }
-  scope.__thimblePatched = true;
 
   console.log('Applying patches to scope');
+  getRootState(scope).nextModificationId = 0;
 
   modifyFunction(scope);
   modifyFrame(scope);
@@ -138,12 +187,4 @@ export function modifyAll (scope: Scope) {
   modifyScreen(scope);
   modifyStorage(scope);
   modifyWebGL(scope);
-}
-
-export function init (seed: number, scope: Scope) {
-  window.__thimbleRootState = {
-    seed,
-    nextModificationId: 0,
-  };
-  modifyAll(scope);
 }

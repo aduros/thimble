@@ -1,5 +1,5 @@
 import { expect } from "@esm-bundle/chai";
-import { Scope, init } from "../mods";
+import { Scope, init, modifyAll } from "../mods";
 
 function createIFrameScope (parentScope: Scope): Promise<Scope> {
   const iframeElement = parentScope.document.createElement('iframe');
@@ -15,14 +15,18 @@ function createIFrameScope (parentScope: Scope): Promise<Scope> {
   });
 }
 
+/** Create a snapshot of an object, stripping all getters and functions. */
 function deepClone<T> (obj: T): T {
   if (Array.isArray(obj)) {
     return obj.map(deepClone) as T;
   }
   if (obj != null && typeof obj === 'object') {
     const copy = {} as typeof obj;
-    for (const prop in obj) {
-      copy[prop] = deepClone(obj[prop]);
+    for (const propName in obj) {
+      const propValue = obj[propName];
+      if (typeof propValue !== 'function') {
+        copy[propName] = deepClone(propValue);
+      }
     }
     return copy;
   }
@@ -47,7 +51,14 @@ export function testFingerprint<T> (opts: TestFingerprintOptions<T>) {
   beforeEach(async () => {
     scope = await createIFrameScope(window);
     originalValue = await query(scope);
-    init(12345, scope);
+
+    // Use a preset seed to keep tests deterministic
+    window.__thimbleRootState = {
+      seed: 12345,
+      nextModificationId: 0,
+    };
+    modifyAll(scope);
+
     fakeValue = await query(scope);
   })
 
@@ -57,8 +68,7 @@ export function testFingerprint<T> (opts: TestFingerprintOptions<T>) {
     }
   });
 
-  // TODO(2023-11-16): Re-enable this
-  it.skip('should have the same fake value across all scopes', async () => {
+  it('should have the same fake value across all scopes', async () => {
     const iframe = await createIFrameScope(scope);
     for (let ii = 0; ii < 3; ++ii) {
       expect(await query(iframe)).to.deep.equal(fakeValue);

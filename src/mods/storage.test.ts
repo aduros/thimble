@@ -15,16 +15,22 @@ describe('navigator.storage.estimate', () => {
 describe('navigator.webkitTemporaryStorage', () => {
   testFingerprint({
     query (scope) {
-      return new Promise<{ usage: number, quota: number }>((resolve, reject) => {
-        scope.navigator.webkitTemporaryStorage.queryUsageAndQuota((usage, quota) => {
-          resolve({ usage, quota });
-        }, reject);
+      return new Promise<{ usage: number, quota: number } | undefined>((resolve, reject) => {
+        if (scope.navigator.webkitTemporaryStorage) {
+          scope.navigator.webkitTemporaryStorage.queryUsageAndQuota((usage, quota) => {
+            resolve({ usage, quota });
+          }, reject);
+        } else {
+          resolve(undefined);
+        }
       })
     },
     validate (estimate, originalEstimate) {
-      expect(estimate).to.not.deep.equal(originalEstimate);
-      expect(estimate.usage).to.equal(0);
-      expect(estimate.quota).to.equal(52371609271);
+      if (estimate) {
+        expect(estimate).to.not.deep.equal(originalEstimate);
+        expect(estimate.usage).to.equal(0);
+        expect(estimate.quota).to.equal(52371609271);
+      }
     }
   })
 })

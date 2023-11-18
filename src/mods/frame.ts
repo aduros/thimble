@@ -22,5 +22,7 @@ export function modifyFrame (scope: Scope) {
       return originalValue;
     });
   }
+
+  // TODO(2023-11-18): Handle scope.frames getter and scope.window array
 }
 
