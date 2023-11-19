@@ -1,7 +1,7 @@
-import { Scope, modifyFunctionReturnValue, modifyGetter, modifyValue } from '.';
+import { Modifier } from '../install';
 import { Random } from '../utils/random';
 
-export function modifyCanvas (scope: Scope) {
+export function modifyCanvas ({scope, modifyReturned, modifyGetter, modifyValue}: Modifier) {
   function randomizeValue ({originalValue, random}: {originalValue: number, random: Random}): number {
     return originalValue * (1 + random.mutateByFloat(originalValue).nextFloatBetween(-0.0005, 0.0005));
   }
@@ -14,8 +14,8 @@ export function modifyCanvas (scope: Scope) {
     }
   }
 
-  modifyFunctionReturnValue(scope.CanvasRenderingContext2D.prototype, 'getImageData', ({ originalReturnValue, random }) => {
-    const data = originalReturnValue.data;
+  modifyReturned(scope.CanvasRenderingContext2D.prototype, 'getImageData', ({ originalReturned, random }) => {
+    const data = originalReturned.data;
 
     // Mutate the RNG to prevent attackers from undoing the noise by using a known preset
     random.mutateByBytes(data);
@@ -23,7 +23,7 @@ export function modifyCanvas (scope: Scope) {
     for (let n = 0; n < data.length; ++n) {
       data[n] ^= random.nextInt() & 1;
     }
-    return originalReturnValue;
+    return originalReturned;
   });
 
   function createNoisedCopy (sourceCanvas: HTMLCanvasElement): HTMLCanvasElement {

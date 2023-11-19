@@ -1,7 +1,7 @@
-import { Scope, modifyGetter } from '.';
+import { Modifier } from '../install';
 import { Random } from '../utils/random';
 
-export function modifyScreen (scope: Scope) {
+export function modifyScreen ({ scope, modifyGetter }: Modifier) {
   function randomizeValue ({originalValue, random}: {originalValue: number, random: Random}): number {
     return Math.round(originalValue * (1 + random.nextFloatBetween(-0.05, 0.05)));
   }

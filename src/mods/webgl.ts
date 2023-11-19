@@ -1,9 +1,9 @@
-import { Scope, modifyFunctionReturnValue, modifyValue } from ".";
+import { Modifier } from "../install";
 
-export function modifyWebGL (scope: Scope) {
+export function modifyWebGL ({ scope, modifyReturned }: Modifier) {
   for (const type of [ scope.WebGLRenderingContext, scope.WebGL2RenderingContext ]) {
-    modifyFunctionReturnValue(type.prototype, 'getParameter', ({ originalReturnValue, originalArgs, random }) => {
-      if (originalReturnValue) {
+    modifyReturned(type.prototype, 'getParameter', ({ originalReturned, originalArgs, random }) => {
+      if (originalReturned) {
         const paramId = originalArgs[0];
         switch (paramId) {
           case 35661: // MAX_COMBINED_TEXTURE_IMAGE_UNITS
@@ -16,21 +16,21 @@ export function modifyWebGL (scope: Scope) {
           case 34921: // MAX_VERTEX_ATTRIBS
           case 35660: // MAX_VERTEX_TEXTURE_IMAGE_UNITS
           case 36347: // MAX_VERTEX_UNIFORM_VECTORS 
-            return Math.max(0, originalReturnValue - random.mutateByUInt32(paramId).nextIntBetween(0, 4));
+            return Math.max(0, originalReturned - random.mutateByUInt32(paramId).nextIntBetween(0, 4));
 
           case 37445: // UNMASKED_VENDOR_WEBGL
           case 37446: // UNMASKED_RENDERER_WEBGL
             return null;
         }
       }
-      return originalReturnValue;
+      return originalReturned;
     });
 
-    modifyFunctionReturnValue(type.prototype, 'getExtension', ({ originalReturnValue, originalArgs }) => {
+    modifyReturned(type.prototype, 'getExtension', ({ originalReturned, originalArgs }) => {
       if (originalArgs[0] === 'WEBGL_debug_renderer_info') {
         return null;
       }
-      return originalReturnValue;
+      return originalReturned;
     });
   }
 }

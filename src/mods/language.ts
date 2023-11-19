@@ -1,6 +1,6 @@
-import { Scope, modifyGetter } from '.';
+import { Modifier } from '../install';
 
-export function modifyLanguage (scope: Scope) {
+export function modifyLanguage ({ scope, modifyGetter }: Modifier) {
   modifyGetter(scope.Navigator.prototype, 'language', ({originalValue, random}) => {
     return `${originalValue}-${random.nextWord(1)}-${random.nextWord(6)}`;
   });

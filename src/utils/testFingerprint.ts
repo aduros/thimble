@@ -1,5 +1,5 @@
 import { expect } from "@esm-bundle/chai";
-import { Scope, modifyAll } from "../mods";
+import { Scope, install } from "../install";
 
 function createIFrameScope (parentScope: Scope): Promise<Scope> {
   const iframeElement = parentScope.document.createElement('iframe');
@@ -54,10 +54,9 @@ export function testFingerprint<T> (opts: TestFingerprintOptions<T>) {
 
     window.__thimbleRootState = {
       seed: 12345, // Use a preset seed to keep tests deterministic
-      nextModificationId: 0,
       mimicFunctions: new WeakMap(),
     };
-    modifyAll(scope);
+    install(scope);
 
     fakeValue = await query(scope);
   })

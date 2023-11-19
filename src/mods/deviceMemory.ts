@@ -1,6 +1,6 @@
-import { Scope, modifyGetter } from '.';
+import { Modifier } from '../install';
 
-export function modifyDeviceMemory (scope: Scope) {
+export function modifyDeviceMemory ({ scope, modifyGetter }: Modifier) {
   // Chrome only
   if ('deviceMemory' in scope.Navigator.prototype) {
     modifyGetter(scope.Navigator.prototype, 'deviceMemory', ({originalValue, random}) => {

@@ -1,11 +1,11 @@
-import { Scope, modifyAll, modifyGetter } from ".";
+import { Scope, Modifier, install } from "../install";
 
-export function modifyFrame (scope: Scope) {
+export function modifyFrame ({scope, modifyGetter}: Modifier) {
   for (const elementType of [ scope.HTMLIFrameElement, scope.HTMLFrameElement ]) {
     modifyGetter(elementType.prototype, 'contentWindow', ({originalValue}) => {
       // console.log('Getting contentWindow');
       if (originalValue) {
-        modifyAll(originalValue as Scope);
+        install(originalValue as Scope);
       } else {
         console.log('ABORT contentWindow because it is null');
       }
@@ -15,7 +15,7 @@ export function modifyFrame (scope: Scope) {
     modifyGetter(elementType.prototype, 'contentDocument', ({originalValue}) => {
       // console.log('Getting contentDocument');
       if (originalValue && originalValue.defaultView) {
-        modifyAll(originalValue.defaultView);
+        install(originalValue.defaultView);
       } else {
         console.log('ABORT contentDocument because it is null');
       }

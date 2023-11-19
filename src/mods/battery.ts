@@ -1,4 +1,4 @@
-import { Scope, modifyGetter } from ".";
+import { Modifier } from "../install";
 
 declare global {
   interface BatteryManager {
@@ -17,7 +17,7 @@ declare global {
   } | undefined;
 }
 
-export function modifyBattery (scope: Scope) {
+export function modifyBattery ({scope, modifyGetter}: Modifier) {
   modifyGetter(scope.BatteryManager?.prototype, 'charging', () => true);
   modifyGetter(scope.BatteryManager?.prototype, 'chargingTime', () => 0);
   modifyGetter(scope.BatteryManager?.prototype, 'dischargingTime', () => Infinity);

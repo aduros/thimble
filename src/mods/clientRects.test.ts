@@ -1,6 +1,6 @@
 import { expect } from '@esm-bundle/chai';
 import { testFingerprint } from '../utils/testFingerprint';
-import { Scope } from '.';
+import { Scope } from '../install';
 
 function createTestSpan(scope: Scope): HTMLSpanElement {
   const span = scope.document.createElement('span');

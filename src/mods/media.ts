@@ -1,15 +1,15 @@
-import { Scope, modifyFunctionReturnValue } from ".";
+import { Modifier } from "../install";
 
-export function modifyMedia (scope: Scope) {
-  modifyFunctionReturnValue(scope.HTMLMediaElement.prototype, 'canPlayType', ({originalArgs, originalReturnValue, random}) => {
+export function modifyMedia ({ scope, modifyReturned }: Modifier) {
+  modifyReturned(scope.HTMLMediaElement.prototype, 'canPlayType', ({originalArgs, originalReturned, random}) => {
     // Randomly swap "probably" and "maybe"
-    if (originalReturnValue && random.mutateByString(originalArgs[0]).nextBoolean()) {
-      switch (originalReturnValue) {
+    if (originalReturned && random.mutateByString(originalArgs[0]).nextBoolean()) {
+      switch (originalReturned) {
         case 'probably': return 'maybe';
         case 'maybe': return 'probably';
-        default: originalReturnValue satisfies never;
+        default: originalReturned satisfies never;
       }
     }
-    return originalReturnValue;
+    return originalReturned;
   });
 }

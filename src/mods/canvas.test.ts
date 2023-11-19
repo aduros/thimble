@@ -1,6 +1,6 @@
 import { expect } from '@esm-bundle/chai';
 import { testFingerprint } from '../utils/testFingerprint';
-import { Scope } from '.';
+import { Scope } from '../install';
 
 function createTestCanvas (scope: Scope): HTMLCanvasElement {
   const canvas = scope.document.createElement('canvas')
