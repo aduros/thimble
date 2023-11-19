@@ -23,7 +23,7 @@ export function modifyStorage({
   modifyValue,
 }: Modifier) {
   modifyReturned(
-    scope.StorageManager.prototype,
+    scope.StorageManager?.prototype,
     'estimate',
     async ({ originalReturned, random }) => {
       // Await the original value to prevent a timing attack
