@@ -6,7 +6,7 @@ describeFingerprint('WebGLRenderingContext.getParameter', {
     const canvas = scope.document.createElement('canvas');
     const gl = canvas.getContext('webgl');
     if (!gl) {
-      return {};
+      return undefined;
     }
 
     const params: string[] = [
@@ -33,7 +33,9 @@ describeFingerprint('WebGLRenderingContext.getParameter', {
   },
 
   validate (extensions, originalExtensions) {
-    expect(extensions).to.not.deep.equal(originalExtensions);
+    if (extensions) {
+      expect(extensions).to.not.deep.equal(originalExtensions);
+    }
   },
 });
 

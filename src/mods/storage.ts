@@ -11,7 +11,7 @@ declare global {
 }
 
 export function modifyStorage ({ scope, modifyReturned, modifyValue }: Modifier) {
-  modifyReturned(scope.StorageManager.prototype, 'estimate', async ({ originalReturned, random }) => {
+  modifyReturned(scope.StorageManager?.prototype, 'estimate', async ({ originalReturned, random }) => {
     // Await the original value to prevent a timing attack
     const estimate = await originalReturned;
 
