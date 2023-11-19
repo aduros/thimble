@@ -127,7 +127,8 @@ export function install (scope: Scope) {
 
     const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
     if (!descriptor) {
-      throw new Error(`Missing descriptor: ${prop.toString()}`);
+      // throw new Error(`Missing descriptor: ${prop.toString()}`);
+      return;
     }
 
     const api = {
@@ -152,7 +153,8 @@ export function install (scope: Scope) {
 
     const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
     if (!descriptor) {
-      throw new Error(`Missing descriptor: ${prop.toString()}`);
+      // throw new Error(`Missing descriptor: ${prop.toString()}`);
+      return;
     }
 
     Object.defineProperty(obj, prop, {

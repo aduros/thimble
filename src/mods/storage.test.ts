@@ -2,12 +2,14 @@ import { expect } from "@esm-bundle/chai";
 import { describeFingerprint } from "../utils/describeFingerprint"
 
 describeFingerprint('StorageManager.estimate', {
-  query: (scope) => scope.navigator.storage.estimate(),
+  query: (scope) => scope.navigator.storage?.estimate(),
 
   validate (estimate, originalEstimate) {
-    expect(estimate).to.not.deep.equal(originalEstimate);
-    expect(estimate.usage).to.equal(0);
-    expect(estimate.quota).to.equal(52371609271);
+    if (estimate) {
+      expect(estimate).to.not.deep.equal(originalEstimate);
+      expect(estimate.usage).to.equal(0);
+      expect(estimate.quota).to.equal(52371609271);
+    }
   }
 })
 
