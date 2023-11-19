@@ -1,8 +1,6 @@
-import { Scope } from ".";
+import { RootState, Scope, getRootState } from ".";
 
-const mimicFunctions = new WeakMap<Function,Function>();
-
-export function createMimicFunction (originalFunction: (...args: any[]) => any, newFunction: (...args: any[]) => any) {
+export function createMimicFunction (rootState: RootState, originalFunction: (...args: any[]) => any, newFunction: (...args: any[]) => any) {
   const { mimic } = {
     mimic(...args: any[]) {
       return newFunction.call(this, ...args);
@@ -10,17 +8,16 @@ export function createMimicFunction (originalFunction: (...args: any[]) => any, 
   };
   Object.defineProperty(mimic, 'name', { value: originalFunction.name });
   Object.defineProperty(mimic, 'length', { value: originalFunction.length });
-  mimicFunctions.set(mimic, originalFunction);
+  rootState.mimicFunctions.set(mimic, originalFunction);
   return mimic;
 }
 
 export function modifyFunction (scope: Scope) {
+  const rootState = getRootState();
+
   const originalToString = scope.Function.prototype.toString;
-  const mimicToString = createMimicFunction(originalToString, function (this: Function) {
-    if (mimicFunctions.get(this) != null) {
-      console.log("has MaskedToString");
-    }
-    const self = mimicFunctions.get(this) ?? this;
+  const mimicToString = createMimicFunction(rootState, originalToString, function (this: Function) {
+    const self = rootState.mimicFunctions.get(this) ?? this;
     return originalToString.call(self);
   });
   scope.Function.prototype.toString = mimicToString;

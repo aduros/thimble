@@ -22,72 +22,43 @@ declare global {
   }
 }
 
-interface RootState {
+export interface RootState {
   seed: number
   nextModificationId: number
-  // mimicFunctions: WeakMap<Function, Function>
+  mimicFunctions: WeakMap<Function, Function>
 }
 
-export function getRootState(scope: Scope): RootState {
-  // let rootState = window.top?.__thimbleRootState ?? window.__thimbleRootState;
-  // if (!rootState) {
-  //   rootState = window.__thimbleRootState = {
-  //     seed: (Math.random() * 4294967295) >>> 0,
-  //     nextModificationId: 0,
-  //   };
-  // }
-  // return rootState;
-
-  let rootState = window.parent.__thimbleRootState ?? window.__thimbleRootState;
+export function getRootState(): RootState {
+  // let rootState = window.parent.__thimbleRootState ?? window.__thimbleRootState;
+  let rootState = window.top?.__thimbleRootState ?? window.__thimbleRootState;
   if (!rootState) {
     rootState = window.__thimbleRootState = {
       seed: (Math.random() * 4294967295) >>> 0,
       nextModificationId: 0,
+      mimicFunctions: new WeakMap(),
     };
   }
   return rootState;
-
-  // let state = scope.parent.__thimbleRootState
-  // if (!state) {
-  //   state = scope.__thimbleRootState;
-  //   if (!state) {
-  //     console.log('Creating');
-  //     // Should never happen?
-  //     state = scope.__thimbleRootState = {
-  //       seed: Date.now(),
-  //       nextModificationId: 0,
-  //     }
-  //   }
-  // }
-  // return state;
-
-  // let state = scope.parent.__thimbleRootState
-  // if (!state) {
-  //   state = scope.__thimbleRootState;
-  //   if (!state) {
-  //     console.log('Creating');
-  //     state = scope.__thimbleRootState = {
-  //       seed: Date.now(),
-  //       nextModificationId: 0,
-  //     }
-  //   }
-  // }
-  // return state;
 }
 
-export interface ModifyValueContext<T> {
-  originalValue: T,
+export interface ModifyValueContext<Value> {
+  originalValue: Value,
   random: Random,
 }
 
-export function modifyValue<O, Prop extends keyof O> (obj: O, prop: Prop, getNewValue: (ctx: ModifyValueContext<O[Prop]>) => O[Prop]) {
+export function modifyValue<Self, Prop extends keyof Self> (obj: Self, prop: Prop, getNewValue: (ctx: ModifyValueContext<Self[Prop]>) => Self[Prop]) {
+  const rootState = getRootState();
+  const modId = rootState.nextModificationId++;
+
+  if (!obj) {
+    return;
+  }
+
   const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
   if (!descriptor) {
     throw new Error(`Missing descriptor: ${prop.toString()}`);
   }
 
-  const rootState = getRootState();
-  const modId = rootState.nextModificationId++;
   const ctx = {
     originalValue: descriptor.value,
     random: new Random(rootState.seed).mutateByUInt32(modId),
@@ -97,29 +68,34 @@ export function modifyValue<O, Prop extends keyof O> (obj: O, prop: Prop, getNew
     enumerable: descriptor.enumerable,
     configurable: descriptor.configurable,
     writable: descriptor.writable,
-    value: typeof newValue === 'function' ? createMimicFunction(descriptor.value, newValue as any) : newValue,
+    value: typeof newValue === 'function' ? createMimicFunction(rootState, descriptor.value, newValue as any) : newValue,
   });
 }
 
-export interface ModifyGetterContext<Self, T> {
+export interface ModifyGetterContext<Self, Value> {
   self: Self,
-  originalValue: T,
+  originalValue: Value,
   random: Random,
 }
 
-export function modifyGetter<O, Prop extends keyof O> (obj: O, prop: Prop, newGetter: (ctx: ModifyGetterContext<O, O[Prop]>) => O[Prop]) {
+export function modifyGetter<Obj, Self extends NonNullable<Obj>, Prop extends keyof Self, Value extends Self[Prop]> (obj: Obj, prop: Prop, newGetter: (ctx: ModifyGetterContext<Self, Value>) => Value) {
+  const rootState = getRootState();
+  const modId = rootState.nextModificationId++;
+
+  if (!obj) {
+    return;
+  }
+
   const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
   if (!descriptor) {
     throw new Error(`Missing descriptor: ${prop.toString()}`);
   }
 
-  const rootState = getRootState();
-  const modId = rootState.nextModificationId++;
   Object.defineProperty(obj, prop, {
     enumerable: descriptor.enumerable,
     configurable: descriptor.configurable,
     set: descriptor.set,
-    get: createMimicFunction(descriptor.get!, function (this: O) {
+    get: createMimicFunction(rootState, descriptor.get!, function (this: Self) {
       const originalValue = descriptor.get!.call(this);
       const ctx = {
         originalValue,
@@ -139,9 +115,9 @@ export interface ModifyFunctionReturnValueContext<Self, Fn extends (...args: any
   random: Random,
 }
 
-export function modifyFunctionReturnValue<O, Prop extends keyof O, Fn extends (O[Prop] extends (...args: any[]) => any ? O[Prop] : never)> (obj: O, prop: Prop, filter: (ctx: ModifyFunctionReturnValueContext<O, Fn>) => ReturnType<Fn>) {
+export function modifyFunctionReturnValue<Self, Prop extends keyof Self, Fn extends (Self[Prop] extends (...args: any[]) => any ? Self[Prop] : never)> (obj: Self, prop: Prop, filter: (ctx: ModifyFunctionReturnValueContext<Self, Fn>) => ReturnType<Fn>) {
   modifyValue(obj, prop, (ctx) => {
-    return function (this: O, ...originalArgs: any[]) {
+    return function (this: Self, ...originalArgs: any[]) {
       const originalFunction = ctx.originalValue;
       return filter({
         self: this,
@@ -150,7 +126,7 @@ export function modifyFunctionReturnValue<O, Prop extends keyof O, Fn extends (O
         originalReturnValue: (ctx.originalValue as (...args: any[]) => any).call(this, ...originalArgs),
         random: ctx.random.clone(),
       });
-    } as O[Prop];
+    } as Self[Prop];
   });
 }
 
@@ -169,7 +145,7 @@ export function modifyAll (scope: Scope) {
   }
 
   console.log('Applying patches to scope');
-  getRootState(scope).nextModificationId = 0;
+  getRootState().nextModificationId = 0;
 
   modifyFunction(scope);
   modifyFrame(scope);
@@ -187,4 +163,13 @@ export function modifyAll (scope: Scope) {
   modifyScreen(scope);
   modifyStorage(scope);
   modifyWebGL(scope);
+
+  // Object.defineProperty(scope.TypeError.prototype, 'stack', {
+  //   get: () => {
+  //     return 'zz'
+  //   }
+  // });
+  //
+  // modifyGetter(Error.prototype, 'stack', () => {
+  // })
 }

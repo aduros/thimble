@@ -66,4 +66,8 @@ export class Random {
   nextChoice<T>(options: T[]): T {
     return options[this.nextInt() % options.length];
   }
+
+  nextBoolean(): boolean {
+    return (this.nextInt() & 1) === 1;
+  }
 }

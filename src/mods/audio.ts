@@ -2,10 +2,7 @@ import { Scope, modifyFunctionReturnValue, modifyValue } from '.';
 
 export function modifyAudio (scope: Scope) {
   modifyFunctionReturnValue(scope.AudioBuffer.prototype, 'getChannelData', ({ originalReturnValue, random }) => {
-    // const offset = 0; // random.nextFloatBetween(-0.25, 0.25);
-    // for (let idx = 0; idx < channelData.length; idx += 10) {
-    //   channelData[idx] += offset + random.nextFloatBetween(-0.05, 0.05);
-    // }
+    // TODO(2023-11-18): random.mutateByBytes(originalReturnValue)
     const offset = random.nextFloatBetween(-0.0005, 0.0005);
     for (let idx = 0; idx < originalReturnValue.length; ++idx) {
       originalReturnValue[idx] = (originalReturnValue[idx] + offset) * (1 + random.nextFloatBetween(-0.0005, 0.0005));
