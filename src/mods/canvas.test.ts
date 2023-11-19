@@ -1,5 +1,5 @@
 import { expect } from '@esm-bundle/chai';
-import { testFingerprint } from '../utils/testFingerprint';
+import { describeFingerprint } from '../utils/describeFingerprint';
 import { Scope } from '../install';
 
 function createTestCanvas (scope: Scope): HTMLCanvasElement {
@@ -20,48 +20,44 @@ function createTestCanvas (scope: Scope): HTMLCanvasElement {
   return canvas;
 }
 
-describe('getImageData', () => {
-  testFingerprint({
-    query: (scope) => {
-      const canvas = createTestCanvas(scope);
-      return canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height);
-    },
-    validate (imageData, originalImageData) {
-      expect(imageData.width).to.equal(originalImageData.width);
-      expect(imageData.height).to.equal(originalImageData.height);
-      expect(imageData.data).to.not.deep.equal(originalImageData.data);
-    }
-  });
+describeFingerprint('HTMLCanvasElement.toDataURL', {
+  query: (scope) => createTestCanvas(scope).toDataURL(),
+
+  async validate (dataUrl, originalDataUrl) {
+    expect(dataUrl).to.not.equal(originalDataUrl);
+    await new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = resolve;
+      image.onerror = reject;
+      image.src = dataUrl;
+    });
+  }
 });
 
-describe('toDataURL', () => {
-  testFingerprint({
-    query: (scope) => createTestCanvas(scope).toDataURL(),
-    async validate (dataUrl, originalDataUrl) {
-      expect(dataUrl).to.not.equal(originalDataUrl);
-      await new Promise((resolve, reject) => {
-        const image = new Image();
-        image.onload = resolve;
-        image.onerror = reject;
-        image.src = dataUrl;
-      });
-    }
-  });
+describeFingerprint('CanvasRenderingContext2D.getImageData', {
+  query: (scope) => {
+    const canvas = createTestCanvas(scope);
+    return canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height);
+  },
+  validate (imageData, originalImageData) {
+    expect(imageData.width).to.equal(originalImageData.width);
+    expect(imageData.height).to.equal(originalImageData.height);
+    expect(imageData.data).to.not.deep.equal(originalImageData.data);
+  }
 });
 
-describe('measureText', () => {
-  testFingerprint({
-    query: (scope) => scope.document.createElement('canvas').getContext('2d')!.measureText('Hello world'),
-    async validate (metrics, originalMetrics) {
-      expect(metrics).to.not.deep.equal(originalMetrics);
+describeFingerprint('CanvasRenderingContext2D.measureText', {
+  query: (scope) => scope.document.createElement('canvas').getContext('2d')!.measureText('Hello world'),
 
-      // The individual properties must also differ
-      for (const prop in metrics) {
-        const originalValue = originalMetrics[prop as keyof TextMetrics];
-        if (originalValue !== 0) {
-          expect(metrics).to.not.have.property(prop, originalValue);
-        }
+  async validate (metrics, originalMetrics) {
+    expect(metrics).to.not.deep.equal(originalMetrics);
+
+    // The individual properties must also differ
+    for (const prop in metrics) {
+      const originalValue = originalMetrics[prop as keyof TextMetrics];
+      if (originalValue !== 0) {
+        expect(metrics).to.not.have.property(prop, originalValue);
       }
     }
-  });
+  }
 });

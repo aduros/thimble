@@ -1,12 +1,10 @@
 import { expect } from '@esm-bundle/chai';
-import { testFingerprint } from '../utils/testFingerprint';
+import { describeFingerprint } from '../utils/describeFingerprint';
 
-describe('navigator.doNotTrack', () => {
-  testFingerprint({
-    query: (scope) => scope.navigator.doNotTrack,
+describeFingerprint('Navigator.doNotTrack', {
+  query: (scope) => scope.navigator.doNotTrack,
 
-    validate (doNotTrack) {
-      expect(doNotTrack).to.be.oneOf([null, '0', '1']);
-    }
-  });
+  validate (doNotTrack) {
+    expect(doNotTrack).to.be.oneOf([null, '0', '1']);
+  }
 })
