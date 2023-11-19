@@ -34,15 +34,19 @@ const enabledMods = [
 
 export type Scope = Window & typeof globalThis
 
+/** API for applying modifications. */
 export interface Modifier {
+  /** The scope we should modify. */
   scope: Scope
 
+  /** Modify a constant value on the given object. */
   modifyValue<Self, Prop extends keyof Self>(
     obj: Self,
     prop: Prop,
     getNewValue: (api: ModifyValueAPI<Self[Prop]>) => Self[Prop],
   ): void
 
+  /** Modify a function's returned value on the given object. */
   modifyReturned<
     Self,
     Prop extends keyof Self,
@@ -53,6 +57,7 @@ export interface Modifier {
     filter: (api: ModifyReturnedAPI<Self, Fn>) => ReturnType<Fn>,
   ): void
 
+  /** Modify a getter on the given object. */
   modifyGetter<
     Obj,
     Self extends NonNullable<Obj>,
@@ -63,6 +68,9 @@ export interface Modifier {
     prop: Prop,
     newGetter: (api: ModifyGetterAPI<Self, Value>) => Value,
   ): void
+
+  /** Helper for mirroring stable modifications across multiple types. */
+  forEachType<T>(types: T[], iterator: (type: T) => void): void
 }
 
 export interface ModifyValueAPI<Value> {
@@ -229,11 +237,20 @@ export function install(scope: Scope) {
     })
   }
 
+  const forEachType: Modifier['forEachType'] = (types, fn) => {
+    const modIdSnapshot = nextModificationId
+    for (const type of types) {
+      nextModificationId = modIdSnapshot
+      fn(type)
+    }
+  }
+
   const api: Modifier = {
     scope,
     modifyValue,
     modifyReturned,
     modifyGetter,
+    forEachType,
   }
 
   for (const mod of enabledMods) {
