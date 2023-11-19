@@ -1,15 +1,15 @@
-import { expect } from '@esm-bundle/chai';
-import { describeFingerprint } from '../utils/describeFingerprint';
+import { expect } from '@esm-bundle/chai'
+import { describeFingerprint } from '../utils/describeFingerprint'
 
 describeFingerprint('WebGLRenderingContext.getParameter', {
-  query (scope) {
-    const canvas = scope.document.createElement('canvas');
-    const gl = canvas.getContext('webgl');
+  query(scope) {
+    const canvas = scope.document.createElement('canvas')
+    const gl = canvas.getContext('webgl')
     if (!gl) {
-      return undefined;
+      return undefined
     }
 
-    const params: string[] = [
+    const params = [
       'MAX_COMBINED_TEXTURE_IMAGE_UNITS',
       'MAX_CUBE_MAP_TEXTURE_SIZE',
       'MAX_FRAGMENT_UNIFORM_VECTORS',
@@ -21,33 +21,33 @@ describeFingerprint('WebGLRenderingContext.getParameter', {
       'MAX_VERTEX_TEXTURE_IMAGE_UNITS',
       'MAX_VERTEX_UNIFORM_VECTORS',
       'MAX_VIEWPORT_DIMS',
-      'MAX_ELEMENT_INDEX',
-      'MAX_CLIENT_WAIT_TIMEOUT_WEBGL',
-    ]
+      // "MAX_ELEMENT_INDEX",
+      // "MAX_CLIENT_WAIT_TIMEOUT_WEBGL",
+    ] as const
 
-    const result: any = {};
+    const result: Record<string, unknown> = {}
     for (const param of params) {
-      result[param] = gl.getParameter((gl as any)[param])
+      result[param] = gl.getParameter(gl[param])
     }
-    return result;
+    return result
   },
 
-  validate (extensions, originalExtensions) {
+  validate(extensions, originalExtensions) {
     if (extensions) {
-      expect(extensions).to.not.deep.equal(originalExtensions);
+      expect(extensions).to.not.deep.equal(originalExtensions)
     }
   },
-});
+})
 
 describeFingerprint('WEBGL_debug_renderer_info', {
-  query (scope) {
-    const canvas = scope.document.createElement('canvas');
-    const gl = canvas.getContext('webgl');
+  query(scope) {
+    const canvas = scope.document.createElement('canvas')
+    const gl = canvas.getContext('webgl')
     if (!gl) {
-      return undefined;
+      return undefined
     }
 
-    const ext = gl.getExtension('WEBGL_debug_renderer_info');
+    const ext = gl.getExtension('WEBGL_debug_renderer_info')
     return {
       extensionIsNull: ext === null,
       vendor: gl.getParameter(37445),
@@ -55,11 +55,11 @@ describeFingerprint('WEBGL_debug_renderer_info', {
     }
   },
 
-  validate (info) {
+  validate(info) {
     if (info) {
-      expect(info.extensionIsNull).to.be.true;
-      expect(info.vendor).to.equal(null);
-      expect(info.renderer).to.equal(null);
+      expect(info.extensionIsNull).to.be.true
+      expect(info.vendor).to.equal(null)
+      expect(info.renderer).to.equal(null)
     }
   },
-});
+})

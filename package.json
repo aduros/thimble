@@ -4,11 +4,17 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "vite",
     "build": "vite build",
-    "test": "web-test-runner ./src/**/*.test.ts",
-    "test:lint": "true",
+    "prepare": "husky install",
+    "start": "vite",
+    "test": "web-test-runner",
+    "test:lint": "eslint .",
     "test:types": "tsc --noEmit"
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx}": [
+      "eslint --fix"
+    ]
   },
   "dependencies": {
     "preact": "^10.16.0"
@@ -17,10 +23,17 @@
     "@esm-bundle/chai": "^4.3.4",
     "@preact/preset-vite": "^2.5.0",
     "@types/mocha": "^10.0.4",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
+    "@typescript-eslint/parser": "^6.11.0",
     "@web/dev-server": "^0.4.1",
     "@web/dev-server-esbuild": "^1.0.1",
     "@web/test-runner": "^0.18.0",
     "@web/test-runner-playwright": "^0.11.0",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.1.0",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
   }

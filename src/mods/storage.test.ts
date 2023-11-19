@@ -1,36 +1,38 @@
-import { expect } from "@esm-bundle/chai";
-import { describeFingerprint } from "../utils/describeFingerprint"
+import { expect } from '@esm-bundle/chai'
+import { describeFingerprint } from '../utils/describeFingerprint'
 
-describeFingerprint('StorageManager.estimate', {
-  query: (scope) => scope.navigator.storage?.estimate(),
+if (typeof StorageManager !== 'undefined') {
+  describeFingerprint('StorageManager.estimate', {
+    query: (scope) => scope.navigator.storage.estimate(),
 
-  validate (estimate, originalEstimate) {
-    if (estimate) {
-      expect(estimate).to.not.deep.equal(originalEstimate);
-      expect(estimate.usage).to.equal(0);
-      expect(estimate.quota).to.equal(52371609271);
-    }
-  }
-})
+    validate(estimate, originalEstimate) {
+      expect(estimate).to.not.deep.equal(originalEstimate)
+      expect(estimate.usage).to.equal(0)
+      expect(estimate.quota).to.equal(52371609271)
+    },
+  })
+}
 
-describeFingerprint('Navigator.webkitTemporaryStorage', {
-  query (scope) {
-    return new Promise<{ usage: number, quota: number } | undefined>((resolve, reject) => {
-      if (scope.navigator.webkitTemporaryStorage) {
-        scope.navigator.webkitTemporaryStorage.queryUsageAndQuota((usage, quota) => {
-          resolve({ usage, quota });
-        }, reject);
-      } else {
-        resolve(undefined);
-      }
-    })
-  },
+if (navigator.webkitTemporaryStorage) {
+  describeFingerprint('Navigator.webkitTemporaryStorage', {
+    query(scope) {
+      return new Promise<{ usage: number; quota: number }>(
+        (resolve, reject) => {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          scope.navigator.webkitTemporaryStorage!.queryUsageAndQuota(
+            (usage, quota) => {
+              resolve({ usage, quota })
+            },
+            reject,
+          )
+        },
+      )
+    },
 
-  validate (estimate, originalEstimate) {
-    if (estimate) {
-      expect(estimate).to.not.deep.equal(originalEstimate);
-      expect(estimate.usage).to.equal(0);
-      expect(estimate.quota).to.equal(52371609271);
-    }
-  }
-})
+    validate(estimate, originalEstimate) {
+      expect(estimate).to.not.deep.equal(originalEstimate)
+      expect(estimate.usage).to.equal(0)
+      expect(estimate.quota).to.equal(52371609271)
+    },
+  })
+}

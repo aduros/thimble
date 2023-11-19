@@ -1,8 +1,8 @@
-import { expect } from '@esm-bundle/chai';
-import { describeFingerprint } from '../utils/describeFingerprint';
+import { expect } from '@esm-bundle/chai'
+import { describeFingerprint } from '../utils/describeFingerprint'
 
 describeFingerprint('HTMLMediaElement.canPlayType', {
-  query (scope) {
+  query(scope) {
     const mediaTypes = [
       'audio/aac',
       'audio/mpeg',
@@ -15,13 +15,15 @@ describeFingerprint('HTMLMediaElement.canPlayType', {
       'video/webm; codecs="vp9"',
       'video/x-matroska',
       'other/x-unknown',
-    ];
+    ]
 
-    const video = scope.document.createElement('video');
-    return Object.fromEntries(mediaTypes.map(type => ([type, video.canPlayType(type)])));
+    const video = scope.document.createElement('video')
+    return Object.fromEntries(
+      mediaTypes.map((type) => [type, video.canPlayType(type)]),
+    )
   },
 
-  validate (mediaTypes, originalMediaTypes) {
-    expect(mediaTypes).to.not.deep.equal(originalMediaTypes);
-  }
-});
+  validate(mediaTypes, originalMediaTypes) {
+    expect(mediaTypes).to.not.deep.equal(originalMediaTypes)
+  },
+})

@@ -1,4 +1,4 @@
-import { install } from "./install";
+import { install } from './install'
 
-console.log('Running anti-finger printing script');
-install(window);
+console.log('Running anti-finger printing script')
+install(window)

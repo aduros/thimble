@@ -1,15 +1,23 @@
-import { Modifier } from '../install';
-import { Random } from '../utils/random';
+import { Modifier } from '../install'
+import { Random } from '../utils/random'
 
-export function modifyScreen ({ scope, modifyGetter }: Modifier) {
-  function randomizeValue ({originalValue, random}: {originalValue: number, random: Random}): number {
-    return Math.round(originalValue * (1 + random.nextFloatBetween(-0.05, 0.05)));
+export function modifyScreen({ scope, modifyGetter }: Modifier) {
+  function randomizeValue({
+    originalValue,
+    random,
+  }: {
+    originalValue: number
+    random: Random
+  }): number {
+    return Math.round(
+      originalValue * (1 + random.nextFloatBetween(-0.05, 0.05)),
+    )
   }
 
-  modifyGetter(scope.Screen.prototype, 'width', randomizeValue);
-  modifyGetter(scope.Screen.prototype, 'availWidth', randomizeValue);
-  modifyGetter(scope.Screen.prototype, 'height', randomizeValue);
-  modifyGetter(scope.Screen.prototype, 'availHeight', randomizeValue);
+  modifyGetter(scope.Screen.prototype, 'width', randomizeValue)
+  modifyGetter(scope.Screen.prototype, 'availWidth', randomizeValue)
+  modifyGetter(scope.Screen.prototype, 'height', randomizeValue)
+  modifyGetter(scope.Screen.prototype, 'availHeight', randomizeValue)
 
   // TODO(2023-11-10): availTop?
 

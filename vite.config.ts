@@ -13,6 +13,6 @@ export default defineConfig({
       name: 'thimble',
       formats: ['iife'],
       fileName: () => `thimble.js`,
-    }
-  }
+    },
+  },
 })

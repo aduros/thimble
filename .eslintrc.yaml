@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://json.schemastore.org/eslintrc
+
+ignorePatterns:
+  - "**/dist"
+
+overrides:
+  - files: [ "*.ts", "*.tsx" ]
+    extends:
+      - eslint:recommended
+      - plugin:@typescript-eslint/recommended-type-checked
+      - plugin:@typescript-eslint/strict-type-checked
+      - plugin:@typescript-eslint/stylistic-type-checked
+      - plugin:prettier/recommended
+
+    parserOptions:
+      project: ./tsconfig.json
+
+    rules:
+      "prettier/prettier":
+        - error
+        - singleQuote: true
+          semi: false
+
+      "@typescript-eslint/no-unsafe-argument": off
+      "@typescript-eslint/no-unsafe-assignment": off
+      "@typescript-eslint/no-unsafe-call": off
+      "@typescript-eslint/no-unsafe-declaration-merging": off
+      "@typescript-eslint/no-unsafe-enum-comparison": off
+      "@typescript-eslint/no-unsafe-member-access": off
+      "@typescript-eslint/no-unsafe-return": off
