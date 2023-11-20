@@ -46,6 +46,11 @@ export function modifyWebGL({ scope, modifyReturned, forEachType }: Modifier) {
           return originalReturned
         },
       )
+
+      // TODO(2023-11-19): readPixels
+      // modifyValue(type.prototype, 'readPixels', ({ originalValue }) => {
+      //   return originalValue
+      // })
     },
   )
 }
