@@ -20,6 +20,12 @@ describe('Random', () => {
     expect(random.nextWord(10)).to.equal('ixsgqtalvp')
   })
 
+  it('generates shuffles', () => {
+    expect(random.nextShuffle([1, 2, 3, 4, 5])).to.deep.equal([1, 3, 5, 2, 4])
+    expect(random.nextShuffle([1, 2, 3, 4, 5])).to.deep.equal([4, 2, 3, 5, 1])
+    expect(random.nextShuffle([1, 2, 3, 4, 5])).to.deep.equal([4, 3, 5, 1, 2])
+  })
+
   it('correctly mutates', () => {
     expect(random.nextInt()).to.equal(3336926330)
 

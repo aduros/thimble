@@ -5,7 +5,9 @@ export function modifyHardwareConcurrency({ scope, modifyGetter }: Modifier) {
     scope.Navigator.prototype,
     'hardwareConcurrency',
     ({ originalValue, random }) => {
-      return Math.max(1, originalValue + random.nextIntBetween(-2, 2))
+      return originalValue > 2
+        ? random.nextIntBetween(2, originalValue)
+        : originalValue
     },
   )
 }

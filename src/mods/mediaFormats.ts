@@ -1,6 +1,6 @@
 import { Modifier } from '../install'
 
-export function modifyMedia({ scope, modifyReturned }: Modifier) {
+export function modifyMediaFormats({ scope, modifyReturned }: Modifier) {
   modifyReturned(
     scope.HTMLMediaElement.prototype,
     'canPlayType',

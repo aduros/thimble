@@ -11,13 +11,14 @@ import { modifyDoNotTrack } from './mods/doNotTrack'
 import { modifyFrame } from './mods/frame'
 import { modifyHardwareConcurrency } from './mods/hardwareConcurrency'
 import { modifyLanguage } from './mods/language'
-import { modifyMedia } from './mods/media'
+import { modifyMediaDevices } from './mods/mediaDevices'
+import { modifyMediaFormats } from './mods/mediaFormats'
 import { modifyScreen } from './mods/screen'
 import { modifyStorage } from './mods/storage'
 import { modifyUserAgent } from './mods/userAgent'
 import { modifyWebGL } from './mods/webgl'
 
-const enabledMods = [
+const enabledMods: ((api: Modifier) => void)[] = [
   modifyAudio,
   modifyBattery,
   modifyCanvas,
@@ -27,7 +28,8 @@ const enabledMods = [
   modifyFrame,
   modifyHardwareConcurrency,
   modifyLanguage,
-  modifyMedia,
+  modifyMediaDevices,
+  modifyMediaFormats,
   modifyScreen,
   modifyStorage,
   modifyUserAgent,

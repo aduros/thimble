@@ -56,6 +56,10 @@ export class Random {
     return lowerInclusive + this.nextFloat() * (upperExclusive - lowerInclusive)
   }
 
+  nextBoolean(): boolean {
+    return (this.nextInt() & 1) === 1
+  }
+
   nextWord(length: number): string {
     let word = ''
     for (let ii = 0; ii < length; ++ii) {
@@ -64,11 +68,19 @@ export class Random {
     return word
   }
 
-  nextChoice<T>(options: T[]): T {
+  nextChoice<T>(options: readonly T[]): T {
     return options[this.nextInt() % options.length]
   }
 
-  nextBoolean(): boolean {
-    return (this.nextInt() & 1) === 1
+  nextShuffle<T>(source: readonly T[]): T[] {
+    const copy = new Array<T>(source.length)
+    for (let ii = 0; ii < copy.length; ++ii) {
+      const swapIdx = this.nextInt() % (ii + 1)
+      if (swapIdx !== ii) {
+        copy[ii] = copy[swapIdx]
+      }
+      copy[swapIdx] = source[ii]
+    }
+    return copy
   }
 }
