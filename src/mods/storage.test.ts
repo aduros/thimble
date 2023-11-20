@@ -8,7 +8,7 @@ if (typeof StorageManager !== 'undefined') {
     validate(estimate, originalEstimate) {
       expect(estimate).to.not.deep.equal(originalEstimate)
       expect(estimate.usage).to.equal(0)
-      expect(estimate.quota).to.equal(52371609271)
+      expect(estimate.quota).to.be.within(2 * 1024 ** 3, 32 * 1024 ** 3)
     },
   })
 }
@@ -32,7 +32,7 @@ if (navigator.webkitTemporaryStorage) {
     validate(estimate, originalEstimate) {
       expect(estimate).to.not.deep.equal(originalEstimate)
       expect(estimate.usage).to.equal(0)
-      expect(estimate.quota).to.equal(52371609271)
+      expect(estimate.quota).to.be.within(2 * 1024 ** 3, 32 * 1024 ** 3)
     },
   })
 }

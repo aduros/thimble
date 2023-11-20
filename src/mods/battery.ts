@@ -21,12 +21,18 @@ declare global {
 }
 
 export function modifyBattery({ scope, modifyGetter }: Modifier) {
-  modifyGetter(scope.BatteryManager?.prototype, 'charging', () => true)
+  modifyGetter(scope.BatteryManager?.prototype, 'charging', ({ random }) =>
+    random.nextBoolean(),
+  )
   modifyGetter(scope.BatteryManager?.prototype, 'chargingTime', () => 0)
   modifyGetter(
     scope.BatteryManager?.prototype,
     'dischargingTime',
     () => Infinity,
   )
-  modifyGetter(scope.BatteryManager?.prototype, 'level', () => 1)
+  modifyGetter(
+    scope.BatteryManager?.prototype,
+    'level',
+    ({ random }) => random.nextIntBetween(90, 100) / 100,
+  )
 }

@@ -1,34 +1,36 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { modifyCanvas } from './mods/canvas'
 import { Random } from './utils/random'
-import { modifyHardwareConcurrency } from './mods/hardwareConcurrency'
-import { modifyDeviceMemory } from './mods/deviceMemory'
-import { modifyScreen } from './mods/screen'
 import { modifyAudio } from './mods/audio'
-import { modifyLanguage } from './mods/language'
-import { modifyClientRects } from './mods/clientRects'
-import { modifyMedia } from './mods/media'
-import { modifyFrame } from './mods/frame'
-import { modifyWebGL } from './mods/webgl'
-import { modifyDoNotTrack } from './mods/doNotTrack'
 import { modifyBattery } from './mods/battery'
+import { modifyCanvas } from './mods/canvas'
+import { modifyClientRects } from './mods/clientRects'
+import { modifyDeviceMemory } from './mods/deviceMemory'
+import { modifyDoNotTrack } from './mods/doNotTrack'
+import { modifyFrame } from './mods/frame'
+import { modifyHardwareConcurrency } from './mods/hardwareConcurrency'
+import { modifyLanguage } from './mods/language'
+import { modifyMedia } from './mods/media'
+import { modifyScreen } from './mods/screen'
 import { modifyStorage } from './mods/storage'
+import { modifyUserAgent } from './mods/userAgent'
+import { modifyWebGL } from './mods/webgl'
 
 const enabledMods = [
-  modifyFrame,
   modifyAudio,
   modifyBattery,
   modifyCanvas,
   modifyClientRects,
   modifyDeviceMemory,
   modifyDoNotTrack,
+  modifyFrame,
   modifyHardwareConcurrency,
   modifyLanguage,
   modifyMedia,
   modifyScreen,
   modifyStorage,
+  modifyUserAgent,
   modifyWebGL,
 ]
 

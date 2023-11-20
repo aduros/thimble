@@ -48,7 +48,7 @@ export class Random {
 
   /** Generate the next float between 0 (inclusive) and 1 (exclusive). */
   nextFloat(): number {
-    return this.nextInt() / 0x7fffffff
+    return this.nextInt() / 0xffffffff
   }
 
   /** Generate the next float between two values. */

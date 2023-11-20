@@ -5,7 +5,7 @@ export function modifyLanguage({ scope, modifyGetter }: Modifier) {
     scope.Navigator.prototype,
     'language',
     ({ originalValue, random }) => {
-      return `${originalValue}-${random.nextWord(1)}-${random.nextWord(6)}`
+      return `${originalValue}-${random.nextWord(1)}-${random.nextWord(5)}`
     },
   )
 

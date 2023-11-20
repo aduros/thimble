@@ -1,18 +1,11 @@
-import { Modifier } from '../install'
-import { Random } from '../utils/random'
+import { Modifier, ModifyValueAPI } from '../install'
 
 export function modifyClientRects({
   scope,
   modifyReturned,
   modifyGetter,
 }: Modifier) {
-  function randomizeValue({
-    originalValue,
-    random,
-  }: {
-    originalValue: number
-    random: Random
-  }): number {
+  function randomizeValue({ originalValue, random }: ModifyValueAPI<number>) {
     return (
       originalValue *
       (1 +
