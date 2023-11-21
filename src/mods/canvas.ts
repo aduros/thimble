@@ -38,8 +38,14 @@ export function modifyCanvas({
       random.mutateByBytes(data)
 
       for (let n = 0; n < data.length; ++n) {
-        data[n] ^= random.nextInt() & 1
+        const channel = data[n]
+
+        // Only adjust channels that are different from the previous pixel
+        if (n > 4 && data[n - 4] !== channel) {
+          data[n] = channel ^ (random.nextInt() & 1)
+        }
       }
+
       return originalReturned
     },
   )
