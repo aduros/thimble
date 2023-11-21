@@ -8,17 +8,21 @@
 
 <h3 align="center">Privacy extension to protect your browser fingerprint ☝️</h3>
 
+<!--
 <h4 align="center">
   Download for
   <a href="#">Chrome</a> /
   <a href="#">Firefox</a>
 </h4>
+-->
 
 ## About
 
 > Development status: ⚡ Alpha
 
-Thimble works by slightly randomizing values returned by JS APIs commonly used for fingerprinting.
+Thimble is a web browser extension that helps protect against [device fingerprinting](https://en.wikipedia.org/wiki/Device_fingerprint). By applying subtle random noise to JS APIs that are commonly used for fingerprinting, Thimble aims to make it harder to passively perform cross-site tracking.
+
+The list of modified browser APIs include:
 
 - Audio: Applies imperceptible noise to audio data readouts.
 - Battery state: Randomizes between "charging" and "discharging". Randomize battery level between 90 and 100%.
@@ -35,11 +39,11 @@ Thimble works by slightly randomizing values returned by JS APIs commonly used f
 - Storage quota: Randomly reports between 2 and 32 GB available.
 - User agent: Appends a random suffix.
 
-The goal is to add as much noise as possible to break fingerprinting without impacting user experience.
+The main goal is to add as much noise as possible to break fingerprinting without impacting user experience.
 
 ## Status
 
-As of this writing (Nov 2023), Thimble passes these fingerprinting tests:
+As of this writing (November 2023), Thimble evades these fingerprinters:
 
 - [FingerprintJS Free](https://fingerprintjs.github.io/fingerprintjs/)
 - [FingerprintJS Commercial](https://fingerprint.com/demo/) (clear cookies between tests)
@@ -49,3 +53,12 @@ As of this writing (Nov 2023), Thimble passes these fingerprinting tests:
 - [Browserleaks WebGL](https://browserleaks.com/webgl)
 
 You should get a randomized fingerprint upon each reload.
+
+## Developing
+
+```
+npm install
+npm run build
+```
+
+The extension will be built to `./dist`, which can be loaded as an unpacked extension in your browser.
