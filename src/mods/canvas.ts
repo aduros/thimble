@@ -86,6 +86,9 @@ export function modifyCanvas({
     },
   )
 
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const originalToBlob = scope.HTMLCanvasElement.prototype.toBlob
+
   modifyValue(
     scope.HTMLCanvasElement.prototype,
     'toBlob',
@@ -95,4 +98,36 @@ export function modifyCanvas({
       }
     },
   )
+
+  modifyValue(scope.OffscreenCanvas.prototype, 'convertToBlob', () => {
+    return function (this: OffscreenCanvas, opts) {
+      const type = opts?.type
+      const quality = opts?.quality
+
+      return new Promise((resolve, reject) => {
+        const canvas = document.createElement('canvas')
+        canvas.width = this.width
+        canvas.height = this.height
+
+        const imageBitmap = this.transferToImageBitmap()
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const ctx = canvas.getContext('2d')!
+        ctx.drawImage(imageBitmap, 0, 0)
+        imageBitmap.close()
+
+        originalToBlob.call(
+          createNoisedCopy(canvas),
+          (blob) => {
+            if (blob) {
+              resolve(blob)
+            } else {
+              reject(new Error('OffscreenCanvas.convertToBlob failed'))
+            }
+          },
+          type,
+          quality,
+        )
+      })
+    }
+  })
 }
