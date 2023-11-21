@@ -37,12 +37,12 @@ export function modifyCanvas({
       // Mutate the RNG to prevent attackers from undoing the noise by using a known preset
       random.mutateByBytes(data)
 
-      for (let n = 0; n < data.length; ++n) {
-        const channel = data[n]
+      for (let ii = 0, ll = data.length - 4; ii < ll; ++ii) {
+        const channel = data[ii]
 
-        // Only adjust channels that are different from the previous pixel
-        if (n > 4 && data[n - 4] !== channel) {
-          data[n] = channel ^ (random.nextInt() & 1)
+        // Only adjust channels that are different from the next pixel
+        if (data[ii + 4] !== channel) {
+          data[ii] = channel ^ (random.nextInt() & 1)
         }
       }
 
