@@ -99,7 +99,7 @@ export function modifyCanvas({
     },
   )
 
-  modifyValue(scope.OffscreenCanvas.prototype, 'convertToBlob', () => {
+  modifyValue(scope.OffscreenCanvas?.prototype, 'convertToBlob', () => {
     return function (this: OffscreenCanvas, opts) {
       const type = opts?.type
       const quality = opts?.quality
