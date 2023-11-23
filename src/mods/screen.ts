@@ -4,6 +4,7 @@ declare global {
   interface Screen {
     availTop: number
     availLeft: number
+    isExtended: boolean
   }
 }
 
@@ -35,6 +36,10 @@ export function modifyScreen({ scope, modifyGetter }: Modifier) {
     scope.Screen.prototype,
     'pixelDepth',
     ({ self }) => self.colorDepth,
+  )
+
+  modifyGetter(scope.Screen.prototype, 'isExtended', ({ random }) =>
+    random.nextBoolean(),
   )
 
   modifyGetter(scope, 'screenX', randomizeValue)
