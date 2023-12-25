@@ -128,11 +128,11 @@ export function install(scope: Scope) {
     }
     scope.__thimbleModified = true
   } catch (error) {
-    console.log('Error modifying frame, could be cross-origin?', error)
+    // console.log('Error modifying frame, could be cross-origin?', error)
     return
   }
 
-  console.log('Applying patches to scope')
+  // console.log('Applying patches to scope')
 
   const { seed, mimicFunctions } = getRootState()
   let nextModificationId = 0

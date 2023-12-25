@@ -10,7 +10,7 @@ export function modifyFrame({ scope, modifyGetter }: Modifier) {
         if (originalValue) {
           install(originalValue as Scope)
         } else {
-          console.log('ABORT contentWindow because it is null')
+          // console.log('ABORT contentWindow because it is null')
         }
         return originalValue
       },
@@ -24,7 +24,7 @@ export function modifyFrame({ scope, modifyGetter }: Modifier) {
         if (originalValue && originalValue.defaultView) {
           install(originalValue.defaultView)
         } else {
-          console.log('ABORT contentDocument because it is null')
+          // console.log('ABORT contentDocument because it is null')
         }
         return originalValue
       },

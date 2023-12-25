@@ -3,7 +3,7 @@
   "manifest_version": 3,
   "name": "Thimble",
   "version": "0.0.2",
-  "description": "TBD",
+  "description": "Privacy extension to protect your browser fingerprint ☝️",
   "icons": {
     "128": "./icons/128x128.png"
   },
