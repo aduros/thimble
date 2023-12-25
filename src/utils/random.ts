@@ -28,8 +28,6 @@ export class Random {
     return this.mutateByBytes(new TextEncoder().encode(str))
   }
 
-  // mutateByUInt8Array... hash
-
   /** Generate the next 32 bit integer. */
   nextInt(): number {
     let x = this.state

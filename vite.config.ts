@@ -6,8 +6,8 @@ export default defineConfig({
   plugins: [preact()],
 
   build: {
-    sourcemap: 'inline',
-    minify: false,
+    // sourcemap: 'inline',
+    // minify: false,
     lib: {
       entry: './src/contentScript.ts',
       name: 'thimble',
