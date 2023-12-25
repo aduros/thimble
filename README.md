@@ -27,11 +27,11 @@ Thimble is a web browser extension that helps protect against [device fingerprin
 1. Download the [latest release](https://github.com/aduros/thimble/releases/latest/download/thimble.zip) from GitHub.
 2. Unzip the file somewhere to get a `thimble/` directory.
 3. In Chrome:
-  a. Go to `chrome://extensions`
-  b. Enable developer mode.
-  c. Load the `thimble/` directory as an unpacked extension.
+  - Go to `chrome://extensions`
+  - Enable developer mode.
+  - Load the `thimble/` directory as an unpacked extension.
 
-In theory this extension should support Firefox and Safari, but it hasn't been widely tested.
+In theory this extension should support Firefox and Safari, but it hasn't been widely tested. If you run into problems, please [open an issue](https://github.com/aduros/thimble/issues).
 
 ## Notes
 
