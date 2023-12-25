@@ -6,6 +6,7 @@
   "scripts": {
     "build": "vite build",
     "prepare": "husky install",
+    "release": "bump --commit --tag --push package.json package-lock.json public/manifest.json",
     "start": "vite",
     "test": "web-test-runner",
     "test:lint": "eslint .",
@@ -35,6 +36,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^15.1.0",
     "typescript": "^5.0.2",
+    "version-bump-prompt": "^6.1.0",
     "vite": "^4.4.5"
   }
 }

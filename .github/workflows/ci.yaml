@@ -23,3 +23,27 @@ jobs:
           cache: npm
       - run: npm ci
       - run: ${{ matrix.script.command }}
+
+  release:
+    name: Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: npm
+      - run: npm ci
+
+      - name: Build
+        run: |
+          npm run build
+          mv dist thimble
+          zip -r thimble.zip thimble
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          files: thimble.zip
